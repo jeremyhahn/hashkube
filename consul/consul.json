@@ -1,0 +1,78 @@
+{
+  "min_packer_version": "0.12.0",
+  "variables": {
+    "aws_region": "us-east-1",
+    "consul_version": "1.0.7",
+    "terraform_aws_consul": "v0.3.3",
+    "ca_public_key_path": "{{template_dir}}/tls/consul-ca.crt.pem",
+    "tls_public_key_path": "{{template_dir}}/tls/consul.crt.pem",
+    "tls_private_key_path": "{{template_dir}}/tls/consul.key.pem"
+  },
+  "builders": [{
+    "name": "ubuntu16-ami",
+    "ami_name": "consul-ubuntu-{{isotime | clean_ami_name}}",
+    "ami_description": "An Ubuntu 16.04 AMI that has Consul installed.",
+    "instance_type": "t2.micro",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*ubuntu-xenial-16.04-amd64-server-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["099720109477"],
+      "most_recent": true
+    },
+    "ssh_username": "ubuntu",
+    "tags": {
+        "Name": "consul-ubuntu16-current"
+    }
+  },{
+    "name": "amazon-linux-ami",
+    "ami_name": "consul-amazon-linux-{{isotime | clean_ami_name}}",
+    "ami_description": "An Amazon Linux AMI that has Consul installed.",
+    "instance_type": "t2.micro",
+    "region": "{{user `aws_region`}}",
+    "type": "amazon-ebs",
+    "source_ami_filter": {
+      "filters": {
+        "virtualization-type": "hvm",
+        "architecture": "x86_64",
+        "name": "*amzn-ami-hvm-*",
+        "block-device-mapping.volume-type": "gp2",
+        "root-device-type": "ebs"
+      },
+      "owners": ["amazon"],
+      "most_recent": true
+    },
+    "ssh_username": "ec2-user",
+    "tags": {
+        "Name": "consul-amazon-linux-current"
+    }
+  }],
+  "provisioners": [{
+    "type": "file",
+    "source": "{{user `ca_public_key_path`}}",
+    "destination": "/tmp/ca.crt.pem"
+  }, {
+    "type": "file",
+    "source": "{{user `tls_public_key_path`}}",
+    "destination": "/tmp/crt.pem"
+  }, {
+    "type": "file",
+    "source": "{{user `tls_private_key_path`}}",
+    "destination": "/tmp/key.pem"
+  }, {
+    "type": "shell",
+    "inline": [
+      "if ! type git > /dev/null; then sudo yum install -y git; fi",
+      "git clone --branch {{user `terraform_aws_consul`}}  https://github.com/hashicorp/terraform-aws-consul.git /tmp/terraform-aws-consul",
+      "/tmp/terraform-aws-consul/modules/install-consul/install-consul --version {{user `consul_version`}} --ca-file-path /tmp/ca.crt.pem --cert-file-path /tmp/crt.pem --key-file-path /tmp/key.pem",
+      "/tmp/terraform-aws-consul/modules/install-dnsmasq/install-dnsmasq"
+    ],
+    "pause_before": "30s"
+  }]
+}

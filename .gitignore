@@ -1,0 +1,12 @@
+consul/tls
+vault/tls
+vault/keys
+.terraform/*/**/
+.gnupg
+terraform-aws-consul/
+terraform-aws-vault/
+
+terraform.tfstate
+terraform.tfstate.backup
+tfplan
+
