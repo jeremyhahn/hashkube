@@ -41,22 +41,22 @@ TLS certificates are generated for both Consul and Vault and output to `consul/t
 
 To omit both GPG and TLS, run the `make without-gpg-tls` target.
 
-  # Default target (Generate GPG keys, TLS certificates, AMIs and infrastructure)
-  make
+    # Default target (Generate GPG keys, TLS certificates, AMIs and infrastructure)
+    make
 
-  # Clean up generated and downlaoded files
-  make clean
+    # Clean up generated and downlaoded files
+    make clean
 
 Once the keys and certificates are in place, the packer and terraform targets can be run independently.
 
-  # Build packer AMIs only
-  make packer
+    # Build packer AMIs only
+    make packer
 
-  # Run terraform scripts only
-  make quick
+    # Run terraform scripts only
+    make quick
 
-  # Delete local terraform state, re-initialize and plan / apply with new secrets
-  make deploy
+    # Delete local terraform state, re-initialize and plan / apply with new secrets
+    make deploy
 
 See the Makefile for additional targets.
 
@@ -93,4 +93,3 @@ It's possible to sacrifice some security for UX during install by specifying `VA
 The auto-unseal process exports GPG secret keys to the encrypted `devops` S3 bucket and protects them with IAM policies. It's important the generated keys are NOT password protected as it would require the password be stored in clear-text for the installer script to use later or prompt for it, circumventing the automation.
 
 For the most secure deployment, each Vault administrator should generate their own password protected GPG key on a secure system and provide the **PUBLIC key ONLY** for use in the automation. The Vault will need to be unsealed manually following this type of deployment.
-
