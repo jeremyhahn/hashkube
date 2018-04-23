@@ -11,7 +11,7 @@ VAULT_KEY_SHARES=3
 CLUSTER_NAME=hashkube
 CLUSTER_DOMAIN=jeremyhahn.com
 
-default: quick
+default: install
 
 gpg-clean:
 	rm -rf .gnupg/ vault/keys
