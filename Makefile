@@ -20,14 +20,16 @@ certs-clean:
 ifndef SHRED
 		rm -rf vault/tls consul/tls
 else
-		shred -z -u vault/tls consul/tls
+	  rm -rf vault/tls consul/tls
+		#shred -z -u vault/tls consul/tls
 endif
 
 privatetls-clean:
 ifndef SHRED
 		rm -rf privatetls/.terraform privatetls/terraform.tfstate*
 else
-		shred -z -u privatetls/.terraform privatetls/terraform.tfstate*
+	  rm -rf privatetls/.terraform privatetls/terraform.tfstate*
+		#	shred -z -u privatetls/.terraform privatetls/terraform.tfstate*
 endif
 
 terraform-clean:
