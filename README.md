@@ -93,3 +93,4 @@ It's possible to sacrifice some security for UX during install by specifying `VA
 The auto-unseal process exports GPG secret keys to the encrypted `devops` S3 bucket and protects them with IAM policies. It's important the generated keys are NOT password protected as it would require the password be stored in clear-text for the installer script to use later or prompt for it, circumventing the automation.
 
 For the most secure deployment, each Vault administrator should generate their own password protected GPG key on a secure system and provide the **PUBLIC key ONLY** for use in the automation. The Vault will need to be unsealed manually following this type of deployment.
+
